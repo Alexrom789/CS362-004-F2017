@@ -1,0 +1,70 @@
+Alejandro Romero 
+CS362 Software Engineering II
+11/9/2017
+Bug Report
+
+Tester: Alejandro Romero
+Code Author: Adeline Harcourt
+
+Bug 1:
+
+Title: Adventurer returns wrong hand and deck count when played.
+
+Project: Dominion card game
+Version: v1.0, assignment 2 refactored code.
+Type: Bug
+Status: Open
+Priority: Major
+Resolution: Not resolved
+File name: dominion.c
+Environment: Flip ENGR server; gcc compiler with options -Wall -fpic -coverage -lm -std=c99
+ 
+Description:
+Upon being played, the adventurer card gives active player wrong amount of cards causing hand and deck count to return improper amounts.
+Having this bug gives a significant advantage to the player who played it and goes against the card original functionality causing the game to be unbalanced thus deemed a major bug.
+The bug can be reproduced by compiling the cardtest2.c file with the command "make cardtest2" and then running the resulting executable file. The test will show improper hand and deck count.
+I found the bug when I ported my unit and random tests over to my teammate's project and ran them. The initial test that discovered it first was my unit test for the Adventurer card (cardtest2.c), but it also appears in my random test for the Adventurer card (randomtestadventurer.c), manifesting itself in a similar way.
+I then traced the failure back to the Adventurer card's function within dominion.c, going through the function line by line checking the logic until the culprit code was found.
+
+Code causing Bug:
+On line 651 of dominion.c, the while loop is incorrect. The line currently reads:
+    while (drawntreasure < 3)
+However, this this is the improper condition for the card in which the drawing should stop after drawing 2 and only 2 treasure cards.
+Since this increases the number of times a treasure card is drawn from 2 to 3 it causes the players to not only have an extra card in hand, taking an extra card from the deck, but also puts them at a treasure advantage.
+
+Suggested Fix:
+Change line 651 of dominion.c to be:
+     while (drawntreasure < 2)
+This will cause the correct number of treasure cards to be drawn allowing the hand and deck count test to pass, while also allowing the card to be played as intended.
+
+
+Bug 2:
+
+Title: Smithy returns wrong hand and deck count when played.
+
+Project: Dominion card game
+Version: v1.0, assignment 2 refactored code.
+Type: Bug
+Status: Open
+Priority: Major
+Resolution: Not resolved
+File name: dominion.c
+Environment: Flip ENGR server; gcc compiler with options -Wall -fpic -coverage -lm -std=c99
+ 
+Description: 
+Upon being played, the smity card gives active player wrong amount of cards causing hand and deck count to return improper amounts.
+Having this bug gives a significant advantage to the player who played it and goes against the card original functionality causing the game to be unbalanced thus deemed a major bug.
+The bug can be reproduced by compiling the cardtest1.c file with the command "make cardtest1" and then running the resulting executable file. The test will show improper hand and deck count.
+I found the bug when I ported my unit and random tests over to my teammate's project and ran them. The initial test that discovered it first was my unit test for the Smithy card (cardtest1.c), but it also appears in my random test for the Smithy card (randomtestcard2.c), manifesting itself in a similar way.
+I then traced the failure back to the Smithy card's function within dominion.c, going through the function line by line checking the logic until the culprit code was found.
+
+Code causing Bug:
+On line 723 of dominion.c, there is a for loop condition that reads:
+    for (i = 0; i <= 3; i++)
+This causes the loop to run one extra time then intended. 
+This allows the player using the card to have a 4 card advantage, which then causes both the deck and hand counts to be incorrect when the card is done being played.
+
+Suggested Fix: 
+Change line 723 of dominion.c to:
+    for (i = 0; i < 3; i++)
+This allows the card to be played as intended allowing the player to draw 3 cards.
